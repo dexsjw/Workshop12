@@ -1,5 +1,5 @@
 package nus.iss.workshop12.exception;
 
-public class NumberFoundException {
-    
+public class RandomNumberException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 }
