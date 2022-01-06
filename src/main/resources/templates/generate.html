@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Number Generator</title>
+</head>
+<body>
+    <form action="#" th:action="@{/generate}" th:object="${generate}" method="POST">
+        <h1>How many numbers do you wish to generate?</h1>
+        <input type="text" th:field="*{numberVal}">
+        <input type="submit" value="Generate">
+    </form>
+</body>
+</html>
+
+
+<!-- 
+th:action="@{/generate}" -> helps to dynamically use https://localhost:8080/generate. Use dynamic because hosting in heroku
+                            thus appends /generate to the end
+th:object="${generate}" -> "generate" object that is in model
+th:field="*{numberVal}" -> "Generate.java.getNumberVal()"
+-->
