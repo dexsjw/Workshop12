@@ -27,38 +27,54 @@ public class GenerateController {
     public String showGenerateForm(Model model) {
         Generate generate = new Generate();
         model.addAttribute("generate", generate);       // this "generate" ties to th
-        return "generate";                              // this "generate" ties to model -> generate object
+        return "generate";                              // this "generate" ties to generate html
     }
-
+/* 
+    @GetMapping("/generate")                        // Will cause IllegalStateException: Ambiguous mapping
+    public String test(Model model) {
+        Generate generate = new Generate();
+        model.addAttribute("test", generate);       
+        return "test";                              
+    }
+ */
     @PostMapping("/generate")
-    public String generateNumbers(@ModelAttribute Generate generate, Model model) {
-        logger.info("From the form " + generate.getNumberVal());
-        int numberRandomNumbers = generate.getNumberVal();
-        if (numberRandomNumbers > 10) {
-            //throw new RandomNumberException();
+    public String generateNumbers(@ModelAttribute Generate generate, Model model) { //google ModelAttribute
+        try {
+            logger.info("From the form " + generate.getNumberVal());
+            int numberRandomNumbers = generate.getNumberVal();
+            if (numberRandomNumbers > 10) {
+                throw new RandomNumberException();
+            }
+            
+            String[] imgNumbers = {
+                "Number_1.jpg", "Number_2.jpg", "Number_3.jpg", "Number_4.jpg", "Number_5.jpg",
+                "Number_6.jpg", "Number_7.jpg", "Number_8.jpg", "Number_9.jpg", "Number_10.jpg"
+            };
+
+            List<String> selectedImg = new ArrayList<>();
+            Random randNum = new Random();
+            Set<Integer> uniqueGeneratedRandNumSet = new LinkedHashSet<Integer>();
+            while (uniqueGeneratedRandNumSet.size() < numberRandomNumbers) {
+                Integer resultOfRandNumbers = randNum.nextInt(generate.getNumberVal());
+                uniqueGeneratedRandNumSet.add(resultOfRandNumbers);
+            }
+            
+            Iterator<Integer> it = uniqueGeneratedRandNumSet.iterator();
+            Integer currentElem = null;
+            while (it.hasNext()) {
+                currentElem = it.next();
+                logger.info("currenElem: " + currentElem);
+                selectedImg.add(imgNumbers[currentElem.intValue()]);
+            }
+            model.addAttribute("randNumsResult", selectedImg.toArray());
+            model.addAttribute("numInputByUser", numberRandomNumbers);
+
+        } catch (RandomNumberException e) {
+
             model.addAttribute("errorMessage", "Number exceeded 10!");
             return "error";
+
         }
-        String[] imgNumbers = {
-            "Number_1.jpg", "Number_2.jpg", "Number_3.jpg", "Number_4.jpg", "Number_5.jpg",
-            "Number_6.jpg", "Number_7.jpg", "Number_8.jpg", "Number_9.jpg", "Number_10.jpg"
-        };
-        List<String> selectedImg = new ArrayList<>();
-        Random randNum = new Random();
-        Set<Integer> uniqueGeneratedRandNumSet = new LinkedHashSet<Integer>();
-        while (uniqueGeneratedRandNumSet.size() < numberRandomNumbers) {
-            Integer resultOfRandNumbers = randNum.nextInt(generate.getNumberVal() + 1);
-            uniqueGeneratedRandNumSet.add(resultOfRandNumbers);
-        }
-        
-        Iterator<Integer> it = uniqueGeneratedRandNumSet.iterator();
-        Integer currentElem = null;
-        while (it.hasNext()) {
-            currentElem = it.next();
-            logger.info("currenElem: " + currentElem);
-            selectedImg.add(imgNumbers[currentElem.intValue()]);
-        }
-        model.addAttribute("randNumsResult", selectedImg.toArray());
         return "result";
     }
 
